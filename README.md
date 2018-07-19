@@ -212,3 +212,6 @@ Now you can use the component in you blade file:
 The $laraflow is a Laraflow Eloquent object. The end point is the route of the 
 controller update function. The save function pass only the configuration attribute 
 to the controller. 
+
+If you did everything right you can see this editor:   
+![alt text](https://github.com/szana8/laraflow-go/sample/sample.jpg)
