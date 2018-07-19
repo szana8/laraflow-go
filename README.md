@@ -214,4 +214,4 @@ controller update function. The save function pass only the configuration attrib
 to the controller. 
 
 If you did everything right you can see this editor:   
-![alt text](https://github.com/szana8/laraflow-go/sample/sample.jpg)
+![alt text](./sample/sample.JPG)
