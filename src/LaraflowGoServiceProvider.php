@@ -19,6 +19,7 @@ class LaraflowGoServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/assets/js/components' => base_path('resources/assets/js/components/laraflow-go'),
                 __DIR__.'/../resources/assets/js/LaraflowGo.js' => base_path('resources/assets/js/LaraflowGo.js'),
                 __DIR__.'/../resources/assets/js/event-bus.js' => base_path('resources/assets/js/event-bus.js'),
+                __DIR__.'/../config/laraflowGo.php' => config_path('laraflowGo.php')
             ], 'laraflow-go-components');
 
         }

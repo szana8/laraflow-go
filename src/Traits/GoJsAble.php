@@ -51,6 +51,25 @@ trait GoJsAble
     }
 
     /**
+     * Return the default workflow attributes from the larascrum
+     * config file
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    protected function getDefaultWorkflow()
+    {
+        return config('laraflowGo.workflow.default');
+    }
+
+    /**
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    public function getValidatorsAttribute()
+    {
+        return config('laraflowGo.validators');
+    }
+
+    /**
      * Convert the original state array to the appropriate format
      *
      * @param $configuration
