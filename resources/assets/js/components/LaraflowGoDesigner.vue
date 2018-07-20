@@ -59,7 +59,7 @@
                 myPalette: null,
                 defaultCategories: [],
                 showTransition: true,
-                palette: this.configuration.nodeArray,
+                palette: this.configuration.nodeDataArray,
                 links: this.configuration.linkDataArray,
                 gojsDiagram: this.configuration.goJsObject
             }
@@ -135,7 +135,7 @@
                         toNode = nodeDataArray.nodeDataArray[i].text;
 
                     if (nodeDataArray.nodeDataArray[i].key == evt.subject.part.data.from)
-                    fromNode = nodeDataArray.nodeDataArray[i].text;
+                        fromNode = nodeDataArray.nodeDataArray[i].text;
                 }
 
                 window.laraflowGo.model.setDataProperty(evt.subject.part.data, 'text', fromNode + ' to ' + toNode);
@@ -181,10 +181,10 @@
                     configuration: this.gojsDiagram
                 }).then((response) => {
                     if(response.status == 201) {
-                        flash(response.data, 'success');
+                        this.$emit('updated', response);
                     }
                 }).catch((error) => {
-                    console.log(error);
+                    this.$emit('updateError', error);
                 });
             },
 
@@ -212,7 +212,7 @@
                 // than set all of the visible attribute based on
                 // the value of the checkbox
                 for(var i in linkDataArray.linkDataArray) {
-                   linkDataArray.linkDataArray[i].visible = !this.showTransition;
+                    linkDataArray.linkDataArray[i].visible = !this.showTransition;
                 }
                 // and finally pass to the gojs diagram
                 // to refresh it

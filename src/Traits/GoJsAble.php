@@ -4,6 +4,8 @@
 namespace szana8\LaraflowGo\Traits;
 
 
+use Illuminate\Support\Collection;
+
 trait GoJsAble
 {
     /**
@@ -33,7 +35,7 @@ trait GoJsAble
      *
      * @return array
      */
-    public function getNodeArrayAttribute()
+    public function getNodeDataArrayAttribute()
     {
         return $this->nodeDataArray;
     }
@@ -134,10 +136,12 @@ trait GoJsAble
      */
     public function decompile($configuration)
     {
+        $configurationCollection = json_decode($configuration, true);
+
         return collect([
-            'property_path' => json_decode($this->configuration, true)['property_path'],
-            'steps' => $this->decompileSteps(json_decode($configuration, true)['nodeDataArray']),
-            'transitions' => $this->decompileLinks($configuration)
+            'property_path' => $this->getPropertyPath(),
+            'steps' => $this->decompileSteps($configurationCollection),
+            'transitions' => $this->decompileLinks($configurationCollection)
         ])->toJson();
     }
 
@@ -150,7 +154,7 @@ trait GoJsAble
      */
     protected function decompileSteps($steps)
     {
-        collect($steps)->map(function($value) {
+        collect($steps['nodeDataArray'])->map(function($value) {
             array_push($this->nodeDataArray, [
                 'text' =>  $value['text'],
                 'extra' => [
@@ -171,12 +175,12 @@ trait GoJsAble
      * @param $workflow
      * @return void
      */
-    protected function decompileLinks($workflow)
+    protected function decompileLinks(array $links)
     {
-        collect(json_decode($workflow, true)['linkDataArray'])->map(function ($value) use ($workflow) {
+        collect($links['linkDataArray'])->map(function ($value) use ($links) {
             array_push($this->linkDataArray, [
-                'from' => $this->getStateByKey(json_decode($workflow, true)['nodeDataArray'], $value['from']),
-                'to' =>  $this->getStateByKey(json_decode($workflow, true)['nodeDataArray'], $value['to']),
+                'from' => $this->getStateByKey($links['nodeDataArray'], $value['from']),
+                'to' =>  $this->getStateByKey($links['nodeDataArray'], $value['to']),
                 'text' => $value['text'],
                 'extra' => [
                     'fromPort' => $value['fromPort'],
@@ -202,13 +206,20 @@ trait GoJsAble
      * @param $searchKey
      * @return int|string
      */
-    protected function getStateByKey($workflow, $searchKey)
+    protected function getStateByKey($link, $searchKey)
     {
-        foreach($workflow as $key => $value)
-        {
-            if($value['key'] == $searchKey) {
-                return $key;
-            }
-        }
+        return collect($link)->search(function($value, $key) use ($searchKey) {
+            return $value['key'] == $searchKey;
+        });
+    }
+
+    /**
+     * Return the propery path value from the original configuration.
+     *
+     * @return mixed
+     */
+    protected function getPropertyPath()
+    {
+        return json_decode($this->configuration, true)['property_path'];
     }
 }
