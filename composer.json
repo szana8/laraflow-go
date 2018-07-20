@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "szana8/laraflow": "0.1"
+        "szana8/laraflow": "0.*"
     },
     "require-dev": {},
     "autoload": {
