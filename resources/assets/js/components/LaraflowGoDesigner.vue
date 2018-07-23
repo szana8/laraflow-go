@@ -3,6 +3,8 @@
 
         <create-status-dialog @created="addStatus"></create-status-dialog>
 
+        <callback-configuration-dialog @configured="createWorkflowSnapshot"></callback-configuration-dialog>
+
         <div class="row mt-5">
             <div class="col-md-12">
                 <div class="card">
@@ -18,7 +20,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-2 border-right" style="height: 600px;" id="workflow-designer-palette"></div>
+                            <!--<div class="col-md-2 border-right" style="height: 600px;" id="workflow-designer-palette"></div>-->
                             <div class="col-md-10" style="height: 600px;" id="workflow-designer-editor"></div>
                         </div>
                     </div>
@@ -40,6 +42,7 @@
     let laraflowGo = require('../../LaraflowGo');
     import { EventBus } from '../../event-bus.js';
     import createStatusDialog from './CreateStatusDialog'
+    import callbackConfigurationDialog from './CallbackConfigurationDialog'
 
     export default {
         props: [
@@ -48,7 +51,8 @@
         ],
 
         components: {
-            createStatusDialog
+            createStatusDialog,
+            callbackConfigurationDialog
         },
 
         data() {
@@ -61,7 +65,10 @@
                 showTransition: true,
                 palette: this.configuration.nodeDataArray,
                 links: this.configuration.linkDataArray,
-                gojsDiagram: this.configuration.goJsObject
+                gojsDiagram: this.configuration.goJsObject,
+                callbackObjects: {
+                    validators: this.configuration.validators
+                }
             }
         },
 
@@ -107,67 +114,34 @@
         },
 
         methods: {
-            checkDuplications(evt) {
-                // TODO have to clean this mass.
-                var obj;
-                var counter = 1;
-                var it = evt.subject.iterator;
+            // Check the node what the user wants to add to the diagram
+            // is already exist or not. If yes we denied the process
+            checkDuplications(node) {
+                var isValid = true;
                 var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
 
-                while (it.next()) {
-                    var node = it.value;
-                    obj = node.part.data.text;
-                }
-
-                for(var i in nodeDataArray.nodeDataArray) {
-                    if (nodeDataArray.nodeDataArray[i].text == obj) {
-                        if(counter > 1) {
-                            alert('You can not add a workflow step more than once!');
-                            window.laraflowGo.remove(node);
-                        }
-                        counter++;
+                isValid = nodeDataArray.nodeDataArray.forEach(function (element) {
+                    if (element.text == node) {
+                        return false;
                     }
-                }
+                });
 
+                return isValid;
             },
 
             // Set the label of the created link between two nodes
             // based on the name of the nodes
             setLinkLabel(evt) {
-                var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
                 var fromNode, toNode;
+                var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
 
-                // TODO have to refactor this cycle!
-                for(var i in nodeDataArray.nodeDataArray) {
-                    if (nodeDataArray.nodeDataArray[i].key == evt.subject.part.data.to)
-                        toNode = nodeDataArray.nodeDataArray[i].text;
-
-                    if (nodeDataArray.nodeDataArray[i].key == evt.subject.part.data.from)
-                        fromNode = nodeDataArray.nodeDataArray[i].text;
-                }
+                nodeDataArray.nodeDataArray.forEach(function (element) {
+                    toNode = (element.key == evt.subject.part.data.to) ? element.text : toNode;
+                    fromNode = (element.key == evt.subject.part.data.from) ? element.text : fromNode;
+                });
 
                 window.laraflowGo.model.setDataProperty(evt.subject.part.data, 'text', fromNode + ' to ' + toNode);
                 this.createWorkflowSnapshot();
-            },
-
-            // Set the GoJS palette with the default categories and
-            // nodeTemplateMap
-            setGoJsPalette() {
-                this.setDefaultCategories();
-                // Set the workflow palette with the necessary steps
-                this.myPalette = GO(go.Palette, "workflow-designer-palette", {
-                    nodeTemplateMap: window.laraflowGo.nodeTemplateMap,
-                    model: new go.GraphLinksModel(this.defaultCategories),
-                    "animationManager.isEnabled": false,
-                });
-            },
-
-            // Set the default categories based on the given
-            // workflow
-            setDefaultCategories() {
-                for (var i = 0; i < this.palette.length; i++) {
-                    this.defaultCategories = this.defaultCategories.concat([{category: this.palette[i].category, text: this.palette[i].text}]);
-                }
             },
 
             // Set the GoJS diagram based on the given json string
@@ -211,12 +185,15 @@
             // Catch the fired event and add a new item to the
             // workflow palette with the given data
             addStatus(category, name) {
-                // First we have to reset the nodeDataArray
-                // except this, can not add a new element
-                this.myPalette.model.nodeDataArray = [];
-                this.palette.push({category: category, text: name});
-                // than set the new array
-                this.myPalette.model.nodeDataArray = this.palette;
+                // If the new status exist in the diagram
+                if (! this.checkDuplications(name) ) {
+                    // Fire a duplicate element event to handle the
+                    // error on the parent side and return
+                    this.$emit('duplicateElement', name);
+                    return false;
+                }
+                // otherwise we add the status to the diagram
+                window.laraflowGo.model.addNodeData({category: category, text: name});
             },
 
             // Enable or disable the visible of the link text

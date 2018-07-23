@@ -109,6 +109,10 @@
     import {EventBus} from '../../event-bus.js';
 
     export default {
+        props: [
+            'validators'
+        ],
+
         data() {
             return {
                 rules: [],
@@ -124,6 +128,8 @@
         mounted() {
             // Initialize event handler to show the modal if the event has been fired
             EventBus.$on('showConfigureCallbacksModal', this.show);
+
+            this.rules = this.validators;
         },
 
         methods: {
@@ -131,7 +137,6 @@
             show(object, callbacks) {
                 this.diagram = object;
                 this.callbackObjects = callbacks;
-
 
                 $("#callback-configuration").modal('show');
             },

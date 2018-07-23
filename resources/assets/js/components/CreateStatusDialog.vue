@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="modal fade" id="create-status" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade" id="create-laraflow-status" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -16,8 +16,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="name">Category</label>
-                            <select name="category" id="category" v-model="category" class="form-control" placeholder="Category">
+                            <label for="category">Category</label>
+                            <select name="category" id="category" v-model="category" class="form-control">
+                                <option selected>Please Choose...</option>
                                 <option value="primary">Primary</option>
                                 <option value="success">Success</option>
                                 <option value="warning">Warning</option>
@@ -56,21 +57,24 @@
             // Show the new workflow status modal to create
             // a new status.
             show() {
-                $("#create-status").modal('show');
+                $("#create-laraflow-status").modal('show');
             },
-
             // Add the new status of the palette
             addStatus() {
                 // Fire a created event to force the parent component
                 // to refresh the palette with the given data
                 this.$emit('created', this.category, this.name);
                // Hide the workflow status modal
-                $("#create-status").modal('hide');
+                $("#create-laraflow-status").modal('hide');
                 // Set the attributes to null
-                $("#create-status").on('hidden-bs-modal', () => {
-                    this.name = null;
-                    this.category = null;
+                $("#create-laraflow-status").on('hidden-bs-modal', () => {
+                    this.resetAttributes();
                 });
+            },
+            // Reset the value of the attributes
+            resetAttributes() {
+                this.name = null;
+                this.category = null;
             }
         }
 
