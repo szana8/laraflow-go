@@ -1,9 +1,9 @@
 <template>
     <div class="container-fluid">
 
-        <create-status-dialog @created="addStatus"></create-status-dialog>
+        <create-status-dialog @created="addStatus" />
 
-        <callback-configuration-dialog @configured="createWorkflowSnapshot"></callback-configuration-dialog>
+        <callback-configuration-dialog @configured="createWorkflowSnapshot" />
 
         <div class="row mt-5">
             <div class="col-md-12">
@@ -83,7 +83,6 @@
             // Check the duplicate steps in the workflow, the
             // workflow can not have duplicate steps.
             EventBus.$on('checkDuplications', this.checkDuplications);
-
             // Listener for the link double click action to open
             // the action dialog
             window.laraflowGo.addDiagramListener("ObjectDoubleClicked", function (e) {
@@ -94,10 +93,8 @@
             // Listener for the link drawn action to create
             // a label for the created link
             window.laraflowGo.addDiagramListener("LinkDrawn", function (e) {
-                if (e.subject.part.type.Sb == 'Link') {
-                    //open the transition dialog
-                    EventBus.$emit('setLinkLabel', e);
-                }
+                // than open the transition dialog
+                e.subject.part.type.Sb == 'Link' ? EventBus.$emit('setLinkLabel', e) : null;
             });
         },
 
@@ -107,13 +104,15 @@
             checkDuplications(node) {
                 var isValid = true;
                 var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
-
+                // check all of the available nodes in the diagram
                 isValid = nodeDataArray.nodeDataArray.forEach(function (element) {
+                    // if the element text is equal than the new node name
+                    // break the cycle and quite from them with false
                     if (element.text == node) {
                         return false;
                     }
                 });
-
+                // at the end, return the result of the check
                 return isValid;
             },
 
@@ -122,13 +121,14 @@
             setLinkLabel(evt) {
                 var fromNode, toNode;
                 var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
-
+                // find the element name to calculate the transition text
                 nodeDataArray.nodeDataArray.forEach(function (element) {
                     toNode = (element.key == evt.subject.part.data.to) ? element.text : toNode;
                     fromNode = (element.key == evt.subject.part.data.from) ? element.text : fromNode;
                 });
-
+                // set the GoJs transition object property
                 window.laraflowGo.model.setDataProperty(evt.subject.part.data, 'text', fromNode + ' to ' + toNode);
+                // than refresh the value of the textarea with the json array of the diagram
                 this.createWorkflowSnapshot();
             },
 
