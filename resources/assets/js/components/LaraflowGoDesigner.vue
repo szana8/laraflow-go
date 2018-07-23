@@ -60,10 +60,8 @@
                 id: this.configuration.id,
                 name: null,
                 category: null,
-                myPalette: null,
                 defaultCategories: [],
                 showTransition: true,
-                palette: this.configuration.nodeDataArray,
                 links: this.configuration.linkDataArray,
                 gojsDiagram: this.configuration.goJsObject,
                 callbackObjects: {
@@ -75,8 +73,6 @@
         mounted() {
             // Have to initialize the workflow first
             laraflowGo.initLaraflowGo('workflow-designer-editor');
-            // than we can set the palette
-            this.setGoJsPalette();
             // Load workflow diagram from the property
             this.setGoJsJsonDiagram(this.gojsDiagram)
             // Have to listen this event, because we can not
@@ -102,14 +98,6 @@
                     //open the transition dialog
                     EventBus.$emit('setLinkLabel', e);
                 }
-            });
-
-            // Listener for drop objects from the palette. If the user
-            // add a new step to the workflow we have to check the
-            // duplications.
-            window.laraflowGo.addDiagramListener("ExternalObjectsDropped", function (e) {
-                // Fire the check duplication event.
-                EventBus.$emit('checkDuplications', e);
             });
         },
 
@@ -150,7 +138,7 @@
             },
 
             // Show the new workflow status modal to add a new
-            // item to the workflow palette
+            // item to the workflow
             show() {
                 EventBus.$emit('showCreateWorkflowStatusModal');
             },
