@@ -76,14 +76,16 @@
             // access to the attributes from the workflow
             // function directly
             EventBus.$on('setLinkLabel', this.setLinkLabel);
-
+            // Check the duplicate steps in the workflow, the
+            // workflow can not have duplicate steps.
             EventBus.$on('checkDuplications', this.checkDuplications);
 
             // Listener for the link double click action to open
             // the action dialog
             window.laraflowGo.addDiagramListener("ObjectDoubleClicked", function (e) {
                 if (e.subject.part.type.Sb == 'Link') {
-                    // TODO have to implement this!
+                    console.log(e.subject.part.data);
+                    EventBus.$emit('showConfigureCallbacksModal', e, window.callbackObjects);
                 }
             });
             // Listener for the link drawn action to create
@@ -95,13 +97,18 @@
                 }
             });
 
+            // Listener for drop objects from the palette. If the user
+            // add a new step to the workflow we have to check the
+            // duplications.
             window.laraflowGo.addDiagramListener("ExternalObjectsDropped", function (e) {
+                // Fire the check duplication event.
                 EventBus.$emit('checkDuplications', e);
             });
         },
 
         methods: {
             checkDuplications(evt) {
+                // TODO have to clean this mass.
                 var obj;
                 var counter = 1;
                 var it = evt.subject.iterator;
@@ -130,6 +137,7 @@
                 var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
                 var fromNode, toNode;
 
+                // TODO have to refactor this cycle!
                 for(var i in nodeDataArray.nodeDataArray) {
                     if (nodeDataArray.nodeDataArray[i].key == evt.subject.part.data.to)
                         toNode = nodeDataArray.nodeDataArray[i].text;
@@ -146,7 +154,7 @@
             // nodeTemplateMap
             setGoJsPalette() {
                 this.setDefaultCategories();
-
+                // Set the workflow palette with the necessary steps
                 this.myPalette = GO(go.Palette, "workflow-designer-palette", {
                     nodeTemplateMap: window.laraflowGo.nodeTemplateMap,
                     model: new go.GraphLinksModel(this.defaultCategories),
@@ -175,20 +183,27 @@
 
             // Save the current status of the workflow
             save() {
+                // First we have to create a snapshot from the actual
+                // state of the workflow diagram and pass the json
+                // output to the configuration textarea
                 this.createWorkflowSnapshot();
-
+                // Update the workflow configuration with the new
+                // value. Use the endpoint property for the link.
                 axios.put(this.endpoint, {
                     configuration: this.gojsDiagram
                 }).then((response) => {
-                    if(response.status == 201) {
-                        this.$emit('updated', response);
-                    }
+                    // If the response is completed normally fire
+                    // an updated event for the parent component
+                    (response.status == 201) ? this.$emit('updated', response) : '';
                 }).catch((error) => {
+                    // If the returns an error, fire an update-error
+                    // event for the parent component.
                     this.$emit('updateError', error);
                 });
             },
 
             // Create a snapshot of the current state of the workflow
+            // in json format.
             createWorkflowSnapshot() {
                 this.gojsDiagram = window.laraflowGo.model.toJSON();
             },

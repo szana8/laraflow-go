@@ -42,8 +42,8 @@
     export default {
         data() {
             return {
-                category: null,
-                name: null
+                name: null,
+                category: null
             }
         },
 
@@ -53,7 +53,8 @@
         },
 
         methods: {
-            // Show the new workflow status modal
+            // Show the new workflow status modal to create
+            // a new status.
             show() {
                 $("#create-status").modal('show');
             },
@@ -67,8 +68,8 @@
                 $("#create-status").modal('hide');
                 // Set the attributes to null
                 $("#create-status").on('hidden-bs-modal', () => {
-                    this.category = null;
                     this.name = null;
+                    this.category = null;
                 });
             }
         }

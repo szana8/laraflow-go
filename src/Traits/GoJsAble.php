@@ -41,7 +41,9 @@ trait GoJsAble
     }
 
     /**
-     * Load the workflow attribute.
+     * Load the workflow attributes and transform all of the
+     * data to the appropriate format which is use by the
+     * GoJS JavaScript diagram engine.
      *
      * @return string
      */
@@ -51,17 +53,20 @@ trait GoJsAble
     }
 
     /**
-     * Return the default workflow attributes from the larascrum
-     * config file
+     * Return the default workflow attributes from the Laraflow
+     * configuration file.
      *
      * @return \Illuminate\Config\Repository|mixed
      */
-    protected function getDefaultWorkflow()
+    public function getDefaultWorkflow()
     {
         return config('laraflowGo.workflow.default');
     }
 
     /**
+     * Return the default validators array from the Laraflow
+     * configuration file.
+     *
      * @return \Illuminate\Config\Repository|mixed
      */
     public function getValidatorsAttribute()
@@ -70,7 +75,7 @@ trait GoJsAble
     }
 
     /**
-     * Convert the original state array to the appropriate format
+     * Convert the original state array to the appropriate format.
      *
      * @param $configuration
      * @return string
@@ -100,7 +105,8 @@ trait GoJsAble
     }
 
     /**
-     * Collect the steps to an array
+     * Convert the laraflow steps to an array which can
+     * acceptable for the GoJS.
      *
      * @return mixed
      */
@@ -122,9 +128,10 @@ trait GoJsAble
     }
 
     /**
-     * Collect the transaction links to an array
+     * Collect the transaction links to an array which is acceptable
+     * for the GoJS JavaScript diagram engine.
      *
-     * @return array
+     * @return array    Converted transition array for GoJS
      */
     protected function getLinkDataArray()
     {
@@ -191,8 +198,8 @@ trait GoJsAble
      * Convert the GoJS workflow links to the proper format
      * for the state machine
      *
-     * @param $workflow
-     * @return void
+     * @param array $links
+     * @return array
      */
     protected function decompileLinks(array $links)
     {
@@ -210,7 +217,7 @@ trait GoJsAble
                     'pre' => [],
                     'post' => []
                 ],
-                'validators' => []
+                'validators' => $value['validators']
             ]);
         });
 
@@ -221,19 +228,19 @@ trait GoJsAble
      * Return the value of the key which belongs to the given
      * state.
      *
-     * @param $workflow
+     * @param $link
      * @param $searchKey
      * @return int|string
      */
     protected function getStateByKey($link, $searchKey)
     {
-        return collect($link)->search(function($value, $key) use ($searchKey) {
+        return collect($link)->search(function($value) use ($searchKey) {
             return $value['key'] == $searchKey;
         });
     }
 
     /**
-     * Return the propery path value from the original configuration.
+     * Return the property path value from the original configuration.
      *
      * @return mixed
      */
