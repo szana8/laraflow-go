@@ -217,7 +217,7 @@ trait GoJsAble
                     'pre' => [],
                     'post' => []
                 ],
-                'validators' => $value['validators']
+                'validators' => isset($value['validators']) ? $value['validators'] : ''
             ]);
         });
 
