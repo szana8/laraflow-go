@@ -60,7 +60,7 @@ trait GoJsAble
      */
     public function getDefaultWorkflow()
     {
-        return config('laraflowGo.workflow.default');
+        return config('laraflowGo.configuration.default');
     }
 
     /**

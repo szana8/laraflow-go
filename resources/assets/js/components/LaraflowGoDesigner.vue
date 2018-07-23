@@ -20,7 +20,6 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <!--<div class="col-md-2 border-right" style="height: 600px;" id="workflow-designer-palette"></div>-->
                             <div class="col-md-10" style="height: 600px;" id="workflow-designer-editor"></div>
                         </div>
                     </div>
@@ -71,6 +70,8 @@
         },
 
         mounted() {
+            // Set the callback object to glabaly.
+            window.callbackObjects = this.callbackObjects;
             // Have to initialize the workflow first
             laraflowGo.initLaraflowGo('workflow-designer-editor');
             // Load workflow diagram from the property
@@ -87,7 +88,6 @@
             // the action dialog
             window.laraflowGo.addDiagramListener("ObjectDoubleClicked", function (e) {
                 if (e.subject.part.type.Sb == 'Link') {
-                    console.log(e.subject.part.data);
                     EventBus.$emit('showConfigureCallbacksModal', e, window.callbackObjects);
                 }
             });
