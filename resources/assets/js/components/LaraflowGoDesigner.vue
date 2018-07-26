@@ -102,14 +102,14 @@
             // Check the node what the user wants to add to the diagram
             // is already exist or not. If yes we denied the process
             checkDuplications(node) {
-                var isValid = true;
-                var nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
+                let isValid = true;
+                let nodeDataArray = JSON.parse(window.laraflowGo.model.toJson());
                 // check all of the available nodes in the diagram
-                isValid = nodeDataArray.nodeDataArray.forEach(function (element) {
+                nodeDataArray.nodeDataArray.forEach(function (element) {
                     // if the element text is equal than the new node name
                     // break the cycle and quite from them with false
                     if (element.text == node) {
-                        return false;
+                        return isValid = false;
                     }
                 });
                 // at the end, return the result of the check
