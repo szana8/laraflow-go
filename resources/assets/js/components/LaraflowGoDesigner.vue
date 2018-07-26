@@ -108,7 +108,7 @@
                 nodeDataArray.nodeDataArray.forEach(function (element) {
                     // if the element text is equal than the new node name
                     // break the cycle and quite from them with false
-                    if (element.text == node) {
+                    if (element.text.toLowerCase() == node.toLowerCase()) {
                         return isValid = false;
                     }
                 });
