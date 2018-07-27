@@ -17,7 +17,7 @@
                             <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
                                     Validators
-                                    <span class="badge badge-secondary">{{ this.rules.length }}</span>
+                                    <span class="badge badge-secondary">{{ rulesCount }}</span>
                                 </a>
                             <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
@@ -109,6 +109,12 @@
         mounted() {
             // Initialize event handler to show the modal if the event has been fired
             EventBus.$on("showConfigureCallbacksModal", this.show);
+        },
+
+        computed: {
+            rulesCount() {
+                return this.rules ? this.rules.length : 0;
+            }
         },
 
         methods: {
