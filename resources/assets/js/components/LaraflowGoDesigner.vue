@@ -38,8 +38,8 @@
 </template>
 
 <script>
-    let laraflowGo = require('../../LaraflowGo');
-    import { EventBus } from '../../event-bus.js';
+    let laraflowGo = require('../LaraflowGo');
+    import { EventBus } from '../event-bus.js';
     import createStatusDialog from './CreateStatusDialog'
     import callbackConfigurationDialog from './CallbackConfigurationDialog'
 

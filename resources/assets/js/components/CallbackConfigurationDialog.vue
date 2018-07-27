@@ -30,7 +30,10 @@
                                    href="#home"
                                    role="tab"
                                    aria-controls="home"
-                                   aria-selected="true">Validators</a>
+                                   aria-selected="true">
+                                    Validators
+                                    <span class="badge badge-secondary">{{ this.rules.length }}</span>
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link"
@@ -59,7 +62,11 @@
                                     <div class="form-group col-md-5">
                                         <label>Select validator</label>
                                         <select class="form-control" v-if="callbackObjects" v-model="rule">
-                                            <option v-bind:value="validator.validator"  v-for="validator in callbackObjects.validators"  v-text="validator.name"></option>
+                                            <option :value="validator.validator"
+                                                    :key="validator.name"
+                                                    v-for="validator in callbackObjects.validators"
+                                                    v-text="validator.name">
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="form-group col-md-6">
@@ -68,14 +75,22 @@
                                     </div>
                                     <div class="form-group col-md-1">
                                         <label>Action</label>
-                                       <button class="btn btn-primary" @click="addRule">+</button>
+                                        <button class="btn btn-primary" @click="addRule">+</button>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <ul>
-                                        <li v-for="rule in rules">{{ Object.keys(rule)[0] }} - {{ rule[Object.keys(rule)[0]] }}</li>
-                                    </ul>
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info" :key="rule[Object.keys(rule)[0]]+Object.keys(rule)[0]" v-for="rule in rules">
+                                            {{ this.callbackObjects.validators[rule[Object.keys(rule)[0]]].name }}: {{ Object.keys(rule)[0] }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="removeRule(rule)">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <br />labels
+                                            <small>{{ this.callbackObjects.validators[rule[Object.keys(rule)[0]]].description }}</small>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -106,13 +121,9 @@
 </template>
 
 <script>
-    import {EventBus} from '../../event-bus.js';
+    import { EventBus } from "../event-bus.js";
 
     export default {
-        props: [
-            'validators'
-        ],
-
         data() {
             return {
                 rules: [],
@@ -122,23 +133,27 @@
                 diagram: null,
                 category: null,
                 callbackObjects: null
-            }
+            };
         },
 
         mounted() {
             // Initialize event handler to show the modal if the event has been fired
-            EventBus.$on('showConfigureCallbacksModal', this.show);
+            EventBus.$on("showConfigureCallbacksModal", this.show);
 
-            this.rules = this.validators;
+            //this.rules = this.validators;
         },
 
         methods: {
             // Show the new callback configuration modal
             show(object, callbacks) {
+                // Set the necessary objects
                 this.diagram = object;
                 this.callbackObjects = callbacks;
+                // Get the validators which are belongs to the selected
+                // transition
+                this.rules = this.diagram.subject.part.data.validators;
 
-                $("#callback-configuration").modal('show');
+                $("#callback-configuration").modal("show");
             },
 
             // Add new rule to the rule-set array
@@ -152,12 +167,21 @@
                 this.field = null;
             },
 
-            save() {
-                window.laraflowGo.model.setDataProperty(this.diagram.subject.part.data, 'validators', this.rules);
-                $("#callback-configuration").modal('hide');
+            removeRule(rule) {
+                let key = Object.keys(rule)[0];
+                this.rules = this.rules.filter( el => el[key] !== rule[key] );
+            },
 
-                this.$emit('configured');
+            save() {
+                window.laraflowGo.model.setDataProperty(
+                    this.diagram.subject.part.data,
+                    "validators",
+                    this.rules
+                );
+                $("#callback-configuration").modal("hide");
+
+                this.$emit("configured");
             }
         }
-    }
+    };
 </script>
