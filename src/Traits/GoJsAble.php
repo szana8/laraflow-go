@@ -146,7 +146,8 @@ trait GoJsAble
                 'toPort' => $value['extra']['toPort'],
                 'points' => $value['extra']['points'],
                 'text' => $value['text'],
-                'visible' => true
+                'visible' => true,
+                'validators' => $value['validators'] ? $value['validators'] : []
             ]);
         });
 
@@ -217,7 +218,7 @@ trait GoJsAble
                     'pre' => [],
                     'post' => []
                 ],
-                'validators' => isset($value['validators']) ? $value['validators'] : ''
+                'validators' => isset($value['validators']) ? $value['validators'] : []
             ]);
         });
 
