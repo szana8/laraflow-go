@@ -112,6 +112,7 @@
         },
 
         computed: {
+            // Return the count of the rules which has been added to the transition
             rulesCount() {
                 return this.rules ? this.rules.length : 0;
             }
@@ -126,7 +127,6 @@
                 // Get the validators which are belongs to the selected
                 // transition
                 this.rules = this.diagram.subject.part.data.validators;
-
                 $("#callback-configuration").modal("show");
             },
 
@@ -134,11 +134,9 @@
             addRule() {
                 var obj = {};
                 obj[this.field] = this.rule;
-
                 this.rules.push(obj);
 
-                this.rule = null;
-                this.field = null;
+                this.resetAttributes();
             },
 
             // Remove the selected rule form the rule set object
@@ -155,8 +153,14 @@
                     this.rules
                 );
                 $("#callback-configuration").modal("hide");
-
+                // Fire an event for the parent component
                 this.$emit("configured");
+            },
+
+            // Reset the attributes value
+            resetAttributes() {
+                this.rule = null;
+                this.field = null;
             }
         }
     };

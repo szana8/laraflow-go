@@ -13,7 +13,7 @@ trait GoJsAble
      *
      * @var
      */
-    protected $laraflowConfiguration;
+    protected $configuration;
 
     /**
      * Initialize node array for GoJS states
@@ -82,7 +82,7 @@ trait GoJsAble
      */
     public function compile($configuration)
     {
-        $this->laraflowConfiguration = json_decode($configuration, true);
+        $this->configuration = json_decode($configuration, true);
 
         return $this->collectGoJs();
     }
@@ -112,10 +112,10 @@ trait GoJsAble
      */
     protected function getNodeDataArray()
     {
-        if(count($this->laraflowConfiguration['steps']) == 0)
+        if(count($this->configuration['steps']) == 0)
             return $this->nodeDataArray;
 
-        collect($this->laraflowConfiguration['steps'])->map(function($value, $key) {
+        collect($this->configuration['steps'])->map(function($value, $key) {
             array_push($this->nodeDataArray, [
                 'category' => $value['extra']['category'],
                 'text' => $value['text'],
@@ -135,10 +135,10 @@ trait GoJsAble
      */
     protected function getLinkDataArray()
     {
-        if(count($this->laraflowConfiguration['transitions']) == 0)
+        if(count($this->configuration['transitions']) == 0)
             return $this->linkDataArray;
 
-        collect($this->laraflowConfiguration['transitions'])->map(function($value) {
+        collect($this->configuration['transitions'])->map(function($value) {
             array_push($this->linkDataArray, [
                 'from' => $value['from'],
                 'to' => $value['to'],
@@ -147,7 +147,11 @@ trait GoJsAble
                 'points' => $value['extra']['points'],
                 'text' => $value['text'],
                 'visible' => true,
-                'validators' => $value['validators'] ? $value['validators'] : []
+                'validators' => $value['validators'] ? $value['validators'] : [],
+                'callbacks' => [
+                        'pre' => $value['callbacks']['pre'] ? $value['callbacks']['pre'] : [],
+                        'post' => $value['callbacks']['post'] ? $value['callbacks']['post'] : []
+                    ],
             ]);
         });
 
@@ -215,8 +219,8 @@ trait GoJsAble
                     'points' => json_encode($value['points'])
                 ],
                 'callbacks' => [
-                    'pre' => [],
-                    'post' => []
+                    'pre' => isset($value['callbacks']['pre']) ? $value['callbacks']['pre'] : [],
+                    'post' => isset($value['callbacks']['post']) ? $value['callbacks']['post'] : [],
                 ],
                 'validators' => isset($value['validators']) ? $value['validators'] : []
             ]);

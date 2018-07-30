@@ -1,11 +1,14 @@
 <template>
     <div class="container-fluid">
-
+        <!-- Create new workflow status and add to the diagram -->
         <create-status-dialog @created="addStatus" />
-
-        <callback-configuration-dialog @configured="createWorkflowSnapshot" />
+        <!-- Transition configuration dialog for the validators, pre-post functions -->
+        <callback-configuration-dialog @configured="configured" @cancelled="cancelled" />
 
         <div class="row mt-5">
+            <div class="col-md-12" v-if="this.callbackMessage">
+                <div class="alert alert-warning">{{ this.callbackMessage }}</div>
+            </div>
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -45,8 +48,8 @@
 
     export default {
         props: [
-            'configuration',
-            'endpoint'
+            'endpoint',
+            'configuration'
         ],
 
         components: {
@@ -56,11 +59,12 @@
 
         data() {
             return {
-                id: this.configuration.id,
                 name: null,
                 category: null,
-                defaultCategories: [],
                 showTransition: true,
+                callbackMessage: null,
+                defaultCategories: [],
+                id: this.configuration.id,
                 links: this.configuration.linkDataArray,
                 gojsDiagram: this.configuration.goJsObject,
                 callbackObjects: {
@@ -157,11 +161,17 @@
                     // If the response is completed normally fire
                     // an updated event for the parent component
                     (response.status == 201) ? this.$emit('updated', response) : '';
+                    this.callbackMessage = null;
                 }).catch((error) => {
                     // If the returns an error, fire an update-error
                     // event for the parent component.
                     this.$emit('updateError', error);
                 });
+            },
+
+            configured() {
+                this.createWorkflowSnapshot();
+                this.callbackMessage = 'The transition callbacks changed. Please save the workflow before you moving forward.'
             },
 
             // Create a snapshot of the current state of the workflow

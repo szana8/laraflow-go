@@ -1,7 +1,5 @@
 exports.initLaraflowGo = (div, palettes) => {
-
     var lightText = 'whitesmoke';
-
 
     window.laraflowGo = GO(go.Diagram, div, {
         initialContentAlignment: go.Spot.Center,
@@ -37,10 +35,8 @@ exports.initLaraflowGo = (div, palettes) => {
      * @param e
      */
     function showLinkLabel(e) {
-
         var label = e.subject.findObject("LABEL");
         label.visible;
-
     }
 
     /**
@@ -49,7 +45,6 @@ exports.initLaraflowGo = (div, palettes) => {
      * @returns {[null,null]}
      */
     function nodeStyle() {
-
         return [
             // The Node.location comes from the "loc" property of the node data,
             // converted by the Point.parse static method.
@@ -80,7 +75,6 @@ exports.initLaraflowGo = (div, palettes) => {
                 }
             }
         ];
-
     }
 
     /**
@@ -93,7 +87,6 @@ exports.initLaraflowGo = (div, palettes) => {
      * @returns {*}
      */
     function makePort(name, spot, output, input) {
-
         return GO(go.Shape, "Circle", {
             fill: "transparent",
             stroke: null,  // this is changed to "white" in the showPorts function
@@ -107,11 +100,9 @@ exports.initLaraflowGo = (div, palettes) => {
             toLinkable: input,  // declare whether the user may draw links to/from here
             cursor: "pointer"  // show a different cursor to indicate potential link point
         });
-
     }
 
     function makeSVG() {
-
         this.svg = laraflowGo.makeSvg({
             scale: 0.5
         });
@@ -123,11 +114,9 @@ exports.initLaraflowGo = (div, palettes) => {
         if (obj.children.length > 0) {
             obj.replaceChild(this.svg, obj.children[0]);
         }
-
     }
 
     function setPalettes(palettes) {
-
         // Set the default palette of the laraflowGo
         defaultPalette();
 
@@ -166,11 +155,9 @@ exports.initLaraflowGo = (div, palettes) => {
 
         // Set the links
         linkTemplate();
-
     }
 
     function defaultPalette() {
-
         window.laraflowGo.nodeTemplateMap.add("",  // the default category
             GO(go.Node, "Spot", nodeStyle(),
                 // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
@@ -198,11 +185,9 @@ exports.initLaraflowGo = (div, palettes) => {
                 makePort("R", go.Spot.Right, true, true),
                 makePort("B", go.Spot.Bottom, true, false)
             ));
-
     }
 
     function startPalette() {
-
         window.laraflowGo.nodeTemplateMap.add("Start",
             GO(go.Node, "Spot", nodeStyle(),
                 GO(go.Panel, "Auto",
@@ -224,11 +209,9 @@ exports.initLaraflowGo = (div, palettes) => {
                 makePort("B", go.Spot.Bottom, true, false)
             )
         );
-
     }
 
     function endPalette() {
-
         window.laraflowGo.nodeTemplateMap.add("End",
             GO(go.Node, "Spot", nodeStyle(),
                 GO(go.Panel, "Auto",
@@ -250,11 +233,9 @@ exports.initLaraflowGo = (div, palettes) => {
                 makePort("R", go.Spot.Right, false, true)
             )
         );
-
     }
 
     function setOtherPalettes(palettes) {
-
         for (var key in palettes) {
             window.laraflowGo.nodeTemplateMap.add(palettes[key].name,
                 GO(go.Node, "Spot", nodeStyle(),
@@ -282,11 +263,9 @@ exports.initLaraflowGo = (div, palettes) => {
                 )
             );
         }
-
     }
 
     function linkTemplate() {
-
         window.laraflowGo.linkTemplate =
             GO(go.Link, {
                     routing: go.Link.AvoidsNodes,
