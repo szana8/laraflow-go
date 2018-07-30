@@ -37,9 +37,7 @@ return [
     |
     | This array is the list of the default validators. You can add these
     | to your state machine if you want to check one/more attribute(s)
-    | before the status change. Validation engine use the default
-    | Laravel Validator class, which means you can use only
-    | those validator(s) which are acceptable for that.
+    | before the status change. You can use ony Laravel validators.
     |
     */
     'validators' => [
@@ -68,6 +66,18 @@ return [
             'validator' => 'timezone',
         ]
 
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Laraflow callbacks
+    |--------------------------------------------------------------------------
+    |
+    | This array is the list of the post and pre function which can be assigned
+    | to the transitions. Every callback has to be an array and each one of
+    | them has three manadatory attributes. Name, description, class.
+    |
+    */
+    'callbacks' => []
 
 ];

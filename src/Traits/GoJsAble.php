@@ -3,9 +3,6 @@
 
 namespace szana8\LaraflowGo\Traits;
 
-
-use Illuminate\Support\Collection;
-
 trait GoJsAble
 {
     /**
@@ -60,7 +57,7 @@ trait GoJsAble
      */
     public function getDefaultWorkflow()
     {
-        return config('laraflowGo.configuration.default');
+        return config('laraflow-go.configuration.default');
     }
 
     /**
@@ -71,7 +68,18 @@ trait GoJsAble
      */
     public function getValidatorsAttribute()
     {
-        return config('laraflowGo.validators');
+        return config('laraflow-go.validators');
+    }
+
+    /**
+     * Return the callbacks array from the Laraflow
+     * configuration file.
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    public function getCallbacksAttribute()
+    {
+        return config('laraflow-go.callbacks');
     }
 
     /**
@@ -112,10 +120,11 @@ trait GoJsAble
      */
     protected function getNodeDataArray()
     {
-        if(count($this->configuration['steps']) == 0)
+        if (count($this->configuration['steps']) == 0) {
             return $this->nodeDataArray;
+        }
 
-        collect($this->configuration['steps'])->map(function($value, $key) {
+        collect($this->configuration['steps'])->map(function ($value, $key) {
             array_push($this->nodeDataArray, [
                 'category' => $value['extra']['category'],
                 'text' => $value['text'],
@@ -135,10 +144,11 @@ trait GoJsAble
      */
     protected function getLinkDataArray()
     {
-        if(count($this->configuration['transitions']) == 0)
+        if (count($this->configuration['transitions']) == 0) {
             return $this->linkDataArray;
+        }
 
-        collect($this->configuration['transitions'])->map(function($value) {
+        collect($this->configuration['transitions'])->map(function ($value) {
             array_push($this->linkDataArray, [
                 'from' => $value['from'],
                 'to' => $value['to'],
@@ -185,7 +195,7 @@ trait GoJsAble
      */
     protected function decompileSteps($steps)
     {
-        collect($steps['nodeDataArray'])->map(function($value) {
+        collect($steps['nodeDataArray'])->map(function ($value) {
             array_push($this->nodeDataArray, [
                 'text' =>  $value['text'],
                 'extra' => [
@@ -239,7 +249,7 @@ trait GoJsAble
      */
     protected function getStateByKey($link, $searchKey)
     {
-        return collect($link)->search(function($value) use ($searchKey) {
+        return collect($link)->search(function ($value) use ($searchKey) {
             return $value['key'] == $searchKey;
         });
     }
