@@ -10,7 +10,7 @@ trait GoJsAble
      *
      * @var
      */
-    protected $configuration;
+    protected $config;
 
     /**
      * Initialize node array for GoJS states
@@ -90,7 +90,7 @@ trait GoJsAble
      */
     public function compile($configuration)
     {
-        $this->configuration = json_decode($configuration, true);
+        $this->config = json_decode($configuration, true);
 
         return $this->collectGoJs();
     }
@@ -120,11 +120,11 @@ trait GoJsAble
      */
     protected function getNodeDataArray()
     {
-        if (count($this->configuration['steps']) == 0) {
+        if (count($this->config['steps']) == 0) {
             return $this->nodeDataArray;
         }
 
-        collect($this->configuration['steps'])->map(function ($value, $key) {
+        collect($this->config['steps'])->map(function ($value, $key) {
             array_push($this->nodeDataArray, [
                 'category' => $value['extra']['category'],
                 'text' => $value['text'],
@@ -144,11 +144,11 @@ trait GoJsAble
      */
     protected function getLinkDataArray()
     {
-        if (count($this->configuration['transitions']) == 0) {
+        if (count($this->config['transitions']) == 0) {
             return $this->linkDataArray;
         }
 
-        collect($this->configuration['transitions'])->map(function ($value) {
+        collect($this->config['transitions'])->map(function ($value) {
             array_push($this->linkDataArray, [
                 'from' => $value['from'],
                 'to' => $value['to'],
