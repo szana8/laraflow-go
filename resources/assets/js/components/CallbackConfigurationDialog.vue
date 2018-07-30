@@ -102,6 +102,10 @@
                 field: null,
                 diagram: null,
                 category: null,
+                preFunctions: [],
+                postFunctions: [],
+                preFunction: null,
+                postFunction: null,
                 callbackObjects: null
             };
         },
@@ -115,6 +119,14 @@
             // Return the count of the rules which has been added to the transition
             rulesCount() {
                 return this.rules ? this.rules.length : 0;
+            },
+            // Return the number of the pre functions which has been added to the transition
+            preFunctionsCount() {
+                return this.preFunctions ? this.preFunctions.length : 0;
+            },
+            // Return the number of the post function which has been added to the transition
+            postFunctionsCount() {
+                return this.postFunctions ? this.postFunctions.length : 0;
             }
         },
 
@@ -139,6 +151,18 @@
                 this.resetAttributes();
             },
 
+            // Add new pre function to the array
+            addPreFunction() {
+                this.preFunctions.push(this.preFunction);
+                this.preFunction = null;
+            },
+
+            // Add new pre function to the array
+            addPostFunction() {
+                this.postFunctions.push(this.postFunction);
+                this.postFunction = null;
+            },
+
             // Remove the selected rule form the rule set object
             removeRule(rule) {
                 let key = Object.keys(rule)[0];
@@ -147,14 +171,40 @@
 
             // Add the rule set to the appropriate transition
             save() {
+                this.setValidatorProperty();
+                this.setPreFunctionsProperty();
+                this.setPostFunctionsProperty();
+
+                $("#callback-configuration").modal("hide");
+                // Fire an event for the parent component
+                this.$emit("configured");
+            },
+
+            // Set the validator property of the laraflow model
+            setValidatorProperty() {
                 window.laraflowGo.model.setDataProperty(
                     this.diagram.subject.part.data,
                     "validators",
                     this.rules
                 );
-                $("#callback-configuration").modal("hide");
-                // Fire an event for the parent component
-                this.$emit("configured");
+            },
+
+            // Set the pre functions property of the laraflow model
+            setPreFunctionsProperty() {
+                window.laraflowGo.model.setDataProperty(
+                    this.diagram.subject.part.data.callbacks,
+                    "pre",
+                    this.preFunctions
+                );
+            },
+
+            // Set the post functions property of the laraflow model
+            setPostFunctionsProperty() {
+                window.laraflowGo.model.setDataProperty(
+                    this.diagram.subject.part.data.callbacks,
+                    "post",
+                    this.postFunctions
+                );
             },
 
             // Reset the attributes value
