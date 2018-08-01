@@ -42,6 +42,12 @@
 			}
 		},
 
+        watch: {
+            availableRules: function(value) {
+                this.rules = value;
+            }
+        },
+
 		mounted() {
 			this.rules = this.availableRules;
 		},

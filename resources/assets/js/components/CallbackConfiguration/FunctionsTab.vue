@@ -37,6 +37,12 @@
 			}
 		},
 
+		watch: {
+			availableFunctions: function(value) {
+				this.functions = value;
+			}
+		},
+
 		mounted() {
 			this.functions = this.availableFunctions;
 		},
