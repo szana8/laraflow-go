@@ -50,16 +50,16 @@
 <script>
     import {EventBus} from "../../event-bus.js";
     import LaraflowDialog from './LaraflowDialog';
-    import ValidatorsTab from '../CallbackConfiguration/ValidatorsTab';
     import TabHeaders from '../CallbackConfiguration/TabHeaders';
     import FunctionsTab from '../CallbackConfiguration/FunctionsTab';
+    import ValidatorsTab from '../CallbackConfiguration/ValidatorsTab';
 
     export default {
         components: {
-            LaraflowDialog,
-            ValidatorsTab,
             TabHeaders,
-            FunctionsTab
+            FunctionsTab,
+            ValidatorsTab,
+            LaraflowDialog,
         },
 
         data() {
@@ -109,7 +109,7 @@
                 this.rules = this.diagram.subject.part.data.validators;
                 this.preFunctions = this.diagram.subject.part.data.callbacks.pre;
                 this.postFunctions = this.diagram.subject.part.data.callbacks.post;
-
+                // open the dialog window
                 $("#callback-configuration").modal("show");
             },
 
@@ -135,12 +135,14 @@
 
             // Add the rule set to the appropriate transition
             save() {
+                // Set the affacted transtition to all of the
+                // callbacks array values
                 this.setValidatorProperty();
                 this.setPreFunctionsProperty();
                 this.setPostFunctionsProperty();
-
+                // than close the dialog window
                 $("#callback-configuration").modal("hide");
-                // Fire an event for the parent component
+                // and finally fire an event for the parent component
                 this.$emit("configured");
             },
 

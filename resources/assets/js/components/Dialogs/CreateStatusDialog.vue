@@ -69,7 +69,7 @@
             resetAttributes() {
                 this.name = null;
                 this.category = null;
-            }
+            },
         }
 
     }

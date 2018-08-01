@@ -41,31 +41,36 @@
 				field: null,
 			}
 		},
-
+        // Watch the availableRules changes to reflect the
+        // new transition dialog open
         watch: {
             availableRules: function(value) {
                 this.rules = value;
             }
         },
-
+        // Set the availableRules value for the rules array
 		mounted() {
 			this.rules = this.availableRules;
 		},
 
 		methods: {
+            // Add the rule object to the rules array and
+            // reset the attrributes value
 			addRule() {
-				var obj = {};
+				let obj = {};
                 obj[this.field] = this.rule;
                 this.rules.push(obj);
-
+                // Fire a refresh rule event to reflect the
+                // parent component the changes
                 this.$emit('refreshRule', this.rules);
                 this.resetAttributes();
 			},
-
+            // Remove the selected rule from the rules array
 			removeRule(rule) {
 				let key = Object.keys(rule)[0];
                 this.rules = this.rules.filter(el => el[key] !== rule[key]);
-
+                // Fire a refresh rule event to reflect the
+                // parent component the changes
                 this.$emit('refreshRule', this.rules);
 			},
 
