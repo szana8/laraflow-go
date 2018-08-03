@@ -153,20 +153,8 @@
                 // state of the workflow diagram and pass the json
                 // output to the configuration textarea
                 this.createWorkflowSnapshot();
-                // Update the workflow configuration with the new
-                // value. Use the endpoint property for the link.
-                axios.put(this.endpoint, {
-                    configuration: this.gojsDiagram
-                }).then((response) => {
-                    // If the response is completed normally fire
-                    // an updated event for the parent component
-                    (response.status == 201) ? this.$emit('updated', response) : '';
-                    this.callbackMessage = null;
-                }).catch((error) => {
-                    // If the returns an error, fire an update-error
-                    // event for the parent component.
-                    this.$emit('updateError', error);
-                });
+                // Fire an updated event for the parent component.
+                this.$emit('updated', this.gojsDiagram);
             },
 
             // Create a snapshot from the current state of the workflow, and
