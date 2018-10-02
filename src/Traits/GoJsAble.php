@@ -1,26 +1,25 @@
 <?php
 
-
 namespace szana8\LaraflowGo\Traits;
 
 trait GoJsAble
 {
     /**
-     * States attribute for GoJS
+     * States attribute for GoJS.
      *
      * @var
      */
     protected $config;
 
     /**
-     * Initialize node array for GoJS states
+     * Initialize node array for GoJS states.
      *
      * @var array
      */
     protected $nodeDataArray = [];
 
     /**
-     * Initialize links array for GoJS transitions
+     * Initialize links array for GoJS transitions.
      *
      * @var array
      */
@@ -28,7 +27,7 @@ trait GoJsAble
 
     /**
      * Return the array of the states which belongs
-     * to the proper workflow
+     * to the proper workflow.
      *
      * @return array
      */
@@ -86,6 +85,7 @@ trait GoJsAble
      * Convert the original state array to the appropriate format.
      *
      * @param $configuration
+     *
      * @return string
      */
     public function compile($configuration)
@@ -97,18 +97,18 @@ trait GoJsAble
 
     /**
      * Collect all of the necessary attribute for GoJS than
-     * cast to json string
+     * cast to json string.
      *
      * @return string
      */
     protected function collectGoJs()
     {
         return collect([
-            'class' => 'go.GraphLinksModel',
+            'class'                  => 'go.GraphLinksModel',
             'linkFromPortIdProperty' => 'fromPort',
-            'linkToPortIdProperty' => 'toPort',
-            'nodeDataArray' => $this->getNodeDataArray(),
-            'linkDataArray' => $this->getLinkDataArray()
+            'linkToPortIdProperty'   => 'toPort',
+            'nodeDataArray'          => $this->getNodeDataArray(),
+            'linkDataArray'          => $this->getLinkDataArray(),
         ])->toJson();
     }
 
@@ -127,9 +127,9 @@ trait GoJsAble
         collect($this->config['steps'])->map(function ($value, $key) {
             array_push($this->nodeDataArray, [
                 'category' => $value['extra']['category'],
-                'text' => $value['text'],
-                'key' => $key,
-                'loc' => $value['extra']['loc'],
+                'text'     => $value['text'],
+                'key'      => $key,
+                'loc'      => $value['extra']['loc'],
             ]);
         });
 
@@ -140,7 +140,7 @@ trait GoJsAble
      * Collect the transaction links to an array which is acceptable
      * for the GoJS JavaScript diagram engine.
      *
-     * @return array    Converted transition array for GoJS
+     * @return array Converted transition array for GoJS
      */
     protected function getLinkDataArray()
     {
@@ -150,17 +150,17 @@ trait GoJsAble
 
         collect($this->config['transitions'])->map(function ($value) {
             array_push($this->linkDataArray, [
-                'from' => $value['from'],
-                'to' => $value['to'],
-                'fromPort' => $value['extra']['fromPort'],
-                'toPort' => $value['extra']['toPort'],
-                'points' => $value['extra']['points'],
-                'text' => $value['text'],
-                'visible' => true,
+                'from'       => $value['from'],
+                'to'         => $value['to'],
+                'fromPort'   => $value['extra']['fromPort'],
+                'toPort'     => $value['extra']['toPort'],
+                'points'     => $value['extra']['points'],
+                'text'       => $value['text'],
+                'visible'    => true,
                 'validators' => $value['validators'] ? $value['validators'] : [],
-                'callbacks' => [
-                        'pre' => $value['callbacks']['pre'] ? $value['callbacks']['pre'] : [],
-                        'post' => $value['callbacks']['post'] ? $value['callbacks']['post'] : []
+                'callbacks'  => [
+                        'pre'  => $value['callbacks']['pre'] ? $value['callbacks']['pre'] : [],
+                        'post' => $value['callbacks']['post'] ? $value['callbacks']['post'] : [],
                     ],
             ]);
         });
@@ -170,9 +170,10 @@ trait GoJsAble
 
     /**
      * Convert the front end state format back to the original array what we
-     * store in the database
+     * store in the database.
      *
      * @param $configuration
+     *
      * @return mixed
      */
     public function decompile($configuration)
@@ -181,28 +182,29 @@ trait GoJsAble
 
         return collect([
             'property_path' => $this->getPropertyPath(),
-            'steps' => $this->decompileSteps($configurationCollection),
-            'transitions' => $this->decompileLinks($configurationCollection)
+            'steps'         => $this->decompileSteps($configurationCollection),
+            'transitions'   => $this->decompileLinks($configurationCollection),
         ])->toJson();
     }
 
     /**
      * Convert the GoJS workflow states to the proper format
-     * for the state machine
+     * for the state machine.
      *
      * @param $steps
+     *
      * @return array
      */
     protected function decompileSteps($steps)
     {
         collect($steps['nodeDataArray'])->map(function ($value) {
             array_push($this->nodeDataArray, [
-                'text' =>  $value['text'],
+                'text'  => $value['text'],
                 'extra' => [
-                    'color' => $value['category'],
+                    'color'    => $value['category'],
                     'category' => $value['category'],
-                    'loc' => $value['loc'],
-                ]
+                    'loc'      => $value['loc'],
+                ],
             ]);
         });
 
@@ -211,28 +213,29 @@ trait GoJsAble
 
     /**
      * Convert the GoJS workflow links to the proper format
-     * for the state machine
+     * for the state machine.
      *
      * @param array $links
+     *
      * @return array
      */
     protected function decompileLinks(array $links)
     {
         collect($links['linkDataArray'])->map(function ($value) use ($links) {
             array_push($this->linkDataArray, [
-                'from' => $this->getStateByKey($links['nodeDataArray'], $value['from']),
-                'to' =>  $this->getStateByKey($links['nodeDataArray'], $value['to']),
-                'text' => $value['text'],
+                'from'  => $this->getStateByKey($links['nodeDataArray'], $value['from']),
+                'to'    => $this->getStateByKey($links['nodeDataArray'], $value['to']),
+                'text'  => $value['text'],
                 'extra' => [
                     'fromPort' => $value['fromPort'],
-                    'toPort' => $value['toPort'],
-                    'points' => json_encode($value['points'])
+                    'toPort'   => $value['toPort'],
+                    'points'   => json_encode($value['points']),
                 ],
                 'callbacks' => [
-                    'pre' => isset($value['callbacks']['pre']) ? $value['callbacks']['pre'] : [],
+                    'pre'  => isset($value['callbacks']['pre']) ? $value['callbacks']['pre'] : [],
                     'post' => isset($value['callbacks']['post']) ? $value['callbacks']['post'] : [],
                 ],
-                'validators' => isset($value['validators']) ? $value['validators'] : []
+                'validators' => isset($value['validators']) ? $value['validators'] : [],
             ]);
         });
 
@@ -245,6 +248,7 @@ trait GoJsAble
      *
      * @param $link
      * @param $searchKey
+     *
      * @return int|string
      */
     protected function getStateByKey($link, $searchKey)
