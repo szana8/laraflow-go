@@ -2,6 +2,8 @@
 Laraflow Go is a front end package for the Laraflow state machine based on VueJS framework and
 GoJS javascript library. You can edit your state machine easy and an elegant way.
 
+[![StyleCI](https://github.styleci.io/repos/141576793/shield?branch=master)]
+
 ## Requirements
 The package has a dependency on the Laraflow package. So, before you use this package
 do the necessary steps which are on the Laraflow readme file.
