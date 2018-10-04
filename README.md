@@ -215,7 +215,7 @@ Vue.component('laraflow-transitions', require('./components/laraflow/laraflow-go
 #### Step 7
 Now you can use the component in you blade file:
 ```php
- <laraflow-designer :configuration="{{ json_encode($laraflow) }}" @update="changed"></laraflow-designer>
+ <laraflow-designer :configuration="{{ json_encode($laraflow) }}" @updated="changed"></laraflow-designer>
 ```
 The $laraflow is a Laraflow Eloquent object. The end point is the route of the
 controller update function. The save function pass only the configuration attribute
